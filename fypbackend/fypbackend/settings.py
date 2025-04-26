@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-5()k1fb*k@5y*ar7azmdo8^svw92^30n)4sgn_#l_tu8w=3a&b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 MEDIA_URL = '/media/'
@@ -192,7 +192,7 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ALLOWED_HOSTS = ['your-app-name.onrender.com']  # Replace with real name after creating
+# ALLOWED_HOSTS = ['your-app-name.onrender.com']  # Replace with real name after creating
 
 
 
