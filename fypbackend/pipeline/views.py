@@ -167,28 +167,29 @@ class MostFrequentEntitybyChannelView(APIView):
 
                 with connection.cursor() as cursor:
                     query = """
-                        SELECT 
-                            t.content AS topic_content, 
-                            c.file_path AS chunk_path, 
-                            v.file_name AS video_filename, 
-                            ch.name AS channel_name,
-                            ch.icon AS channel_icon
-                        FROM 
-                            pipeline_topic t
-                        JOIN 
-                            pipeline_chunk c 
-                            ON t.chunk_id = c.id
-                        JOIN 
-                            pipeline_video v 
-                            ON t.video_id = v.id
-                        JOIN 
-                            pipeline_channel ch 
-                            ON v.channel_id = ch.id
-                        WHERE 
-                            t.entity = %s
-                            AND v.published_date BETWEEN %s AND %s
-                        ORDER BY 
-                            ch.name ASC, v.file_name ASC, v.published_date ASC;
+                          SELECT 
+                                t.content AS topic_content, 
+                                c.file_path AS chunk_path, 
+                                v.file_name AS video_filename, 
+                                v.url AS video_link,
+                                ch.name AS channel_name,
+                                ch.icon AS channel_icon
+                            FROM 
+                                pipeline_topic t
+                            JOIN 
+                                pipeline_chunk c 
+                                ON t.chunk_id = c.id
+                            JOIN 
+                                pipeline_video v 
+                                ON t.video_id = v.id
+                            JOIN 
+                                pipeline_channel ch 
+                                ON v.channel_id = ch.id
+                            WHERE 
+                                t.entity = %s
+                                AND v.published_date BETWEEN %s AND %s
+                            ORDER BY 
+                                ch.name ASC, v.file_name ASC, v.published_date ASC;
                     """
 
                     cursor.execute(query, [entity_name, start_date, end_date])
@@ -198,15 +199,19 @@ class MostFrequentEntitybyChannelView(APIView):
                 grouped_data = defaultdict(lambda: defaultdict(list))
                 channel_icons = {}
                 for row in rows:
-                    channel_name = row[3]
-                    channel_icon = row[4]
+                    topic_content = row[0]
+                    chunk_path = row[1]
                     video_filename = row[2]
+                    video_link = row[3]
+                    channel_name = row[4]
+                    channel_icon = row[5]
+
                     grouped_data[channel_name][video_filename].append({
-                        "topic_content": row[0],
-                        "chunk_path": row[1],
+                        "topic_content": topic_content,
+                        "chunk_path": chunk_path,
+                        "video_link": video_link,
                     })
                     channel_icons[channel_name] = channel_icon
-
                 # Format the entity data
                 entity_data = {
                     "entity": entity_name,
